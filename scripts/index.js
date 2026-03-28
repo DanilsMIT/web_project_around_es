@@ -25,7 +25,62 @@ const initialCards = [
   },
 ];
 
-/*Etapa 2*/
+/*Proyecto 9 - error mensajes*/
+
+function showInputError(inputElement, errorMessage) {
+  const errorElement = inputElement
+    .closest("form")
+    .querySelector(`.${inputElement.id}-input-error`);
+  errorElement.textContent = errorMessage;
+  errorElement.classList.add("form__input-error_active");
+}
+
+function hideInputError(inputElement) {
+  const errorElement = inputElement
+    .closest("form")
+    .querySelector(`.${inputElement.id}-input-error`);
+  errorElement.textContent = "";
+  errorElement.classList.remove("form__input-error_active");
+}
+
+function checkInputValidity(input) {
+  if (!input.validity.valid) {
+    showInputError(input, input.validationMessage);
+  } else {
+    hideInputError(input);
+  }
+}
+
+function inputSubmit(event, inputs) {
+  let formValid = true;
+
+  inputs.forEach((input) => {
+    if (!input.validity.valid) {
+      showInputError(input, input.validationMessage);
+      formValid = false;
+    }
+  });
+
+  if (!formValid) {
+    event.preventDefault();
+  }
+}
+
+function hasInvalidInput(inputs) {
+  return Array.from(inputs).some((input) => !input.validity.valid);
+}
+
+function toggleButtonState(inputs, button) {
+  if (hasInvalidInput(inputs)) {
+    button.classList.add("button__disabled");
+    button.disabled = true;
+  } else {
+    button.classList.remove("button__disabled");
+    button.disabled = false;
+  }
+}
+
+/*Formulario Editar perfil*/
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 
@@ -37,6 +92,16 @@ const inputProfileName = profileForm.querySelector(".popup__input_type_name");
 const inputProfileDescription = profileForm.querySelector(
   ".popup__input_type_description",
 );
+const profileInputs = profileForm.querySelectorAll(".popup__input");
+const profileFormButton = profileForm.querySelector(".popup__button");
+
+profileInputs.forEach((input) => {
+  input.addEventListener("input", () => {
+    checkInputValidity(input);
+    toggleButtonState(profileInputs, profileFormButton);
+  });
+});
+
 const buttonCloseEditProfile =
   editProfileFormPopUp.querySelector(".popup__close");
 
@@ -47,34 +112,27 @@ function closeModal(modal) {
   modal.classList.remove("popup_is-opened");
 }
 
-function fillProfileForm() {
-  inputProfileName.value = profileTitle.textContent;
-  inputProfileDescription.value = profileDescription.textContent;
-}
-
-function handleOpenEditModal(modal) {
-  openModal(modal);
-  fillProfileForm();
-}
-
-function handleProfileFormSubmit(evt) {
-  evt.preventDefault();
-  profileTitle.textContent = inputProfileName.value;
-  profileDescription.textContent = inputProfileDescription.value;
-  closeModal(editProfileFormPopUp);
-}
-
 buttonOpenEditProfile.addEventListener("click", () => {
-  handleOpenEditModal(editProfileFormPopUp);
+  openModal(editProfileFormPopUp);
+  profileForm.reset();
+  profileInputs.forEach((input) => {
+    checkInputValidity(input);
+    toggleButtonState(profileInputs, profileFormButton);
+  });
 });
+
 buttonCloseEditProfile.addEventListener("click", () => {
   closeModal(editProfileFormPopUp);
 });
-profileForm.addEventListener("submit", handleProfileFormSubmit);
+profileForm.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+  inputSubmit(evt, profileInputs);
+  profileTitle.textContent = inputProfileName.value;
+  profileDescription.textContent = inputProfileDescription.value;
+  closeModal(editProfileFormPopUp);
+});
 
-/*Etapa 3*/
-
-/*Parte 5*/
+/* pop-up de imagen*/
 const cardPicturePopUp = document.querySelector("#image-popup");
 const cardPictureButtonClose = cardPicturePopUp.querySelector(".popup__close");
 const cardPicture = cardPicturePopUp.querySelector(".popup__image");
@@ -84,7 +142,7 @@ cardPictureButtonClose.addEventListener("click", () => {
   closeModal(cardPicturePopUp);
 });
 
-/*Parte 1*/
+/*lista de elementos*/
 const cardsTemplate = document
   .querySelector("#cards__list-template")
   .content.querySelector(".card");
@@ -132,7 +190,7 @@ initialCards.forEach((item) => {
   renderCard(item.name, item.link, cardsList);
 });
 
-/*Parte 2*/
+/*formulario nueva carta*/
 const addCardPopUp = document.querySelector("#new-card-popup");
 const addCardForm = addCardPopUp.querySelector("#new-card-form");
 const inputCardName = addCardForm.querySelector(".popup__input_type_card-name");
@@ -141,14 +199,8 @@ const inputCardLink = addCardForm.querySelector(".popup__input_type_url");
 const buttonOpenAddCard = document.querySelector(".profile__add-button");
 const buttonCloseAddCard = addCardPopUp.querySelector(".popup__close");
 
-function fillAddCardForm() {
-  inputCardName.value = "";
-  inputCardLink.value = "";
-}
-
 function handleOpenAddCardForm() {
   openModal(addCardPopUp);
-  fillAddCardForm();
 }
 
 buttonOpenAddCard.addEventListener("click", handleOpenAddCardForm);
@@ -159,6 +211,7 @@ buttonCloseAddCard.addEventListener("click", () => {
 function handleCardFormSubmit(evt) {
   evt.preventDefault();
   renderCard(inputCardName.value, inputCardLink.value, cardsList);
+  addCardForm.reset();
   closeModal(addCardPopUp);
 }
 
