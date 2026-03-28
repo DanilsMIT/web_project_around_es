@@ -32,7 +32,7 @@ function showInputError(inputElement, errorMessage) {
     .closest("form")
     .querySelector(`.${inputElement.id}-input-error`);
   errorElement.textContent = errorMessage;
-  errorElement.classList.add("form__input-error_active");
+  errorElement.classList.add("popup__input-error_active");
 }
 
 function hideInputError(inputElement) {
@@ -40,7 +40,7 @@ function hideInputError(inputElement) {
     .closest("form")
     .querySelector(`.${inputElement.id}-input-error`);
   errorElement.textContent = "";
-  errorElement.classList.remove("form__input-error_active");
+  errorElement.classList.remove("popup__input-error_active");
 }
 
 function checkInputValidity(input) {
