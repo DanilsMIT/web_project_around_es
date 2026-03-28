@@ -115,17 +115,27 @@
             <input
               class="popup__input popup__input_type_card-name"
               name="place-name"
+              id="place-name"
               placeholder="Título"
+              minlength="2"
+              maxlength="30"
               required
               type="text"
             />
+            <span class="place-name-input-error form__input-error"
+              >Completa este campo</span
+            >
             <input
               class="popup__input popup__input_type_url"
               name="link"
+              id="link"
               placeholder="Enlace a la imagen"
               required
               type="url"
             />
+            <span class="link-input-error form__input-error"
+              >Completa este campo</span
+            >
             <button class="button popup__button" type="submit">Crear</button>
           </form>
         </div>
