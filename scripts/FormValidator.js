@@ -11,15 +11,13 @@ export default class FormValidator {
   _showInputError(input, errorMessage) {
     const errorElement = this._form.querySelector(`.${input.id}-input-error`);
     errorElement.textContent = errorMessage;
-    errorElement.classList.add(this._setting.inputErrorText);
-    errorElement.classList.add(this._setting.showError);
+    errorElement.classList.add(this._setting.showInputError);
   }
 
   _hideInputError(input) {
     const errorElement = this._form.querySelector(`.${input.id}-input-error`);
     errorElement.textContent = "";
-    errorElement.classList.remove(this._setting.inputErrorText);
-    errorElement.classList.remove(this._setting.showError);
+    errorElement.classList.remove(this._setting.showInputError);
   }
 
   /*comprobación boton*/

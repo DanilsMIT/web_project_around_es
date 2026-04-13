@@ -34,8 +34,7 @@ const formErrorSettings = {
   input: ".popup__input",
   button: ".popup__button",
   buttonDisabled: "button__disabled",
-  inputErrorText: "popup__input_type_error",
-  showError: "popup__input-error_active",
+  showInputError: "popup__input-error_active",
 };
 
 /*Cerrar PopUps*/
@@ -45,7 +44,6 @@ popups.forEach((popup) => {
     if (event.target.classList.contains("popup_is-opened")) {
       closeModal(popup);
     }
-
     if (event.target.classList.contains("popup__close")) {
       closeModal(popup);
     }
@@ -70,11 +68,8 @@ initialCards.forEach((item) => {
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 
-/*Formulario Editar perfil*/
+/*Formulario editar perfil*/
 const editProfileFormPopUp = document.querySelector("#edit-popup");
-const buttonOpenEditProfile = document.querySelector(".profile__edit-button");
-const buttonCloseEditProfile =
-  editProfileFormPopUp.querySelector(".popup__close");
 
 const profileForm = editProfileFormPopUp.querySelector("#edit-profile-form");
 const inputProfileName = profileForm.querySelector(".popup__input_type_name");
@@ -82,16 +77,13 @@ const inputProfileDescription = profileForm.querySelector(
   ".popup__input_type_description",
 );
 
+const buttonOpenEditProfile = document.querySelector(".profile__edit-button");
 function HandleOpenEditForm() {
   openModal(editProfileFormPopUp);
   profileForm.reset();
   profileFormValidator.resetValidator();
 }
-
 buttonOpenEditProfile.addEventListener("click", HandleOpenEditForm);
-buttonCloseEditProfile.addEventListener("click", () => {
-  closeModal(editProfileFormPopUp);
-});
 
 profileForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
@@ -103,7 +95,7 @@ profileForm.addEventListener("submit", (evt) => {
 const profileFormValidator = new FormValidator(formErrorSettings, profileForm);
 profileFormValidator.setEventListeners();
 
-/*formulario nueva carta*/
+/*Formulario nueva carta*/
 const addCardPopUp = document.querySelector("#new-card-popup");
 
 const addCardForm = addCardPopUp.querySelector("#new-card-form");
@@ -111,29 +103,21 @@ const inputCardName = addCardForm.querySelector(".popup__input_type_card-name");
 const inputCardLink = addCardForm.querySelector(".popup__input_type_url");
 
 const buttonOpenAddCard = document.querySelector(".profile__add-button");
-const buttonCloseAddCard = addCardPopUp.querySelector(".popup__close");
-
 function handleOpenAddCardForm() {
   openModal(addCardPopUp);
   addCardForm.reset();
   addCardFormValidator.resetValidator();
 }
-
 buttonOpenAddCard.addEventListener("click", handleOpenAddCardForm);
-buttonCloseAddCard.addEventListener("click", () => {
-  closeModal(addCardPopUp);
-});
 
-function handleCardFormSubmit(evt) {
+addCardForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
   const name = inputCardName.value;
   const link = inputCardLink.value;
   const object = { name, link };
   renderCard(object, cardsList);
   closeModal(addCardPopUp);
-}
-addCardForm.addEventListener("submit", handleCardFormSubmit);
-
+});
 /*form validator*/
 const addCardFormValidator = new FormValidator(formErrorSettings, addCardForm);
 addCardFormValidator.setEventListeners();

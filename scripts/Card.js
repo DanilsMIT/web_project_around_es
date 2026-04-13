@@ -38,7 +38,7 @@ export default class Card {
     openModal(cardPicturePopUp);
   }
 
-  _eventListeners() {
+  _setEventListeners() {
     this._element
       .querySelector(".card__like-button")
       .addEventListener("click", () => {
@@ -60,7 +60,7 @@ export default class Card {
 
   generateCard() {
     this._element = this._getTemplate();
-    this._eventListeners();
+    this._setEventListeners();
 
     const cardTitle = this._element.querySelector(".card__title");
     const cardImage = this._element.querySelector(".card__image");
