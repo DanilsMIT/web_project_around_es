@@ -2,60 +2,66 @@
 export default class FormValidator {
   constructor(settings, form) {
     this._setting = settings;
-    this._formElement = form;
+    this._form = form;
+    this._inputs = Array.from(this._form.querySelectorAll(this._setting.input));
+    this._buttonForm = this._form.querySelector(this._setting.button);
   }
 
   /*mensajes inputs error*/
-  _showInputError(inputElement, errorMessage) {
-    const errorElement = this._formElement
-      .closest("form")
-      .querySelector(`.${inputElement.id}-input-error`);
+  _showInputError(input, errorMessage) {
+    const errorElement = this._form.querySelector(`.${input.id}-input-error`);
     errorElement.textContent = errorMessage;
-    errorElement.classList.add("popup__input-error_active");
+    errorElement.classList.add(this._setting.inputErrorText);
+    errorElement.classList.add(this._setting.showError);
   }
 
-  _hideInputError(inputElement) {
-    const errorElement = inputElement
-      .closest("form")
-      .querySelector(`.${inputElement.id}-input-error`);
+  _hideInputError(input) {
+    const errorElement = this._form.querySelector(`.${input.id}-input-error`);
     errorElement.textContent = "";
-    errorElement.classList.remove("popup__input-error_active");
+    errorElement.classList.remove(this._setting.inputErrorText);
+    errorElement.classList.remove(this._setting.showError);
   }
 
+  /*comprobación boton*/
   _checkInputValidity(input) {
     if (!input.validity.valid) {
-      showInputError(input, input.validationMessage);
+      this._showInputError(input, input.validationMessage);
     } else {
-      hideInputError(input);
+      this._hideInputError(input);
     }
   }
 
-  /*boton submit error*/
-  _hasInvalidInput(inputs) {
-    return Array.from(inputs).some((input) => !input.validity.valid);
+  _hasInvalidInput() {
+    return this._inputs.some((input) => !input.validity.valid);
   }
 
-  _inputSubmit(event, inputs) {
-    let formValid = true;
-    inputs.forEach((input) => {
-      if (!input.validity.valid) {
-        showInputError(input, input.validationMessage);
-        formValid = false;
-      }
+  _toggleButtonState() {
+    if (this._hasInvalidInput()) {
+      this._buttonForm.classList.add(this._setting.buttonDisabled);
+      this._buttonForm.disabled = true;
+    } else {
+      this._buttonForm.classList.remove(this._setting.buttonDisabled);
+      this._buttonForm.disabled = false;
+    }
+  }
+
+  setEventListeners() {
+    this._toggleButtonState();
+    this._inputs.forEach((input) => {
+      input.addEventListener("input", () => {
+        this._checkInputValidity(input);
+        this._toggleButtonState();
+      });
     });
-
-    if (!formValid) {
-      event.preventDefault();
-    }
   }
 
-  _toggleButtonState(inputs, button) {
-    if (hasInvalidInput(inputs)) {
-      button.classList.add("button__disabled");
-      button.disabled = true;
-    } else {
-      button.classList.remove("button__disabled");
-      button.disabled = false;
-    }
+  resetValidator() {
+    // 1. Vuelve a revisar si el botón debe estar encendido o apagado
+    this._toggleButtonState();
+
+    // 2. Limpia todos los mensajes de error visuales (líneas rojas y textos)
+    this._inputs.forEach((input) => {
+      this._hideInputError(input);
+    });
   }
 }
