@@ -1,6 +1,5 @@
 import Card from "./Card.js";
 import FormValidator from "./FormValidator.js";
-import { initialCards } from "./initialCards.js";
 
 //Sprint 11
 import PopupWithForm from "./PopupWithForm.js";
@@ -8,20 +7,32 @@ import UserInfo from "./UserInfo.js";
 import Section from "./Section.js";
 import PopupWithImage from "./PopupwithImage.js";
 
-/*funcion render*/
-function renderCard(data) {
-  const card = new Card(data, "#cards__list-template", (data) => {
-    PopupVerImagenes.open(data);
-  });
-  const cardElement = card.generateCard(data);
-  SectionCards.addItem(cardElement);
-}
+//Sprint 12 API
+import {
+  loaded,
+  userAPIGET,
+  userAPIPATCH,
+  cardsAPIGET,
+  cardsAPIPOST,
+} from "./API.js";
 
 /*Profile*/
-const Profile = new UserInfo({
-  profileName: ".profile__title",
-  description: ".profile__description",
-});
+let usuario;
+userAPIGET()
+  .then((user) => {
+    usuario = new UserInfo({
+      profileName: user.name,
+      profileAbout: user.about,
+      profileAvatar: user.avatar,
+    });
+    usuario.setUser();
+  })
+  .catch((error) => {
+    console.log(error);
+  })
+  .finally(() => {
+    loaded();
+  });
 
 /*Formulario editar perfil*/
 const editProfileOpenButton = document.querySelector(".profile__edit-button");
@@ -29,7 +40,8 @@ const editProfileOpenButton = document.querySelector(".profile__edit-button");
 const profileForm = new PopupWithForm({
   PopupSelector: "#edit-popup",
   handleFormSubmit: (data) => {
-    Profile.setUserInfo(data);
+    userAPIPATCH(data);
+    usuario.updateUserInfo(data);
     profileForm.close();
   },
 });
@@ -39,28 +51,51 @@ editProfileOpenButton.addEventListener("click", () => {
   profileForm.open();
 });
 
+/*render*/
+function renderCard(data) {
+  const card = new Card(data, "#cards__list-template", (data) => {
+    PopupVerImagenes.open(data);
+  });
+  const cardElement = card.generateCard(data);
+  SectionCards.addItem(cardElement);
+}
+
 /*Seccion Cards*/
+let SectionCards;
+cardsAPIGET().then((datos) => {
+  console.log(datos);
+  SectionCards = new Section(
+    {
+      items: datos,
+      render: (data) => {
+        renderCard(data);
+      },
+    },
+    ".cards__list",
+  );
+  SectionCards.renderItems();
+});
+
+/*popUp imagenes*/
 const PopupVerImagenes = new PopupWithImage("#image-popup");
 PopupVerImagenes.setEventListeners();
-
-const SectionCards = new Section(
-  {
-    items: initialCards,
-    render: (data) => {
-      renderCard(data);
-    },
-  },
-  ".cards__list",
-);
-SectionCards.renderItems();
 
 /*Formulario addCard*/
 const addCardOpenButton = document.querySelector(".profile__add-button");
 const addCardForm = new PopupWithForm({
   PopupSelector: "#new-card-popup",
   handleFormSubmit: (data) => {
-    renderCard(data);
-    addCardForm.close();
+    cardsAPIPOST(data)
+      .then((datos) => {
+        renderCard(datos);
+        addCardForm.close();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        loaded();
+      });
   },
 });
 addCardForm.setEventListeners();
