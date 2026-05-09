@@ -6,24 +6,37 @@ import PopupWithForm from "./PopupWithForm.js";
 import UserInfo from "./UserInfo.js";
 import Section from "./Section.js";
 import PopupWithImage from "./PopupwithImage.js";
+import PopupDelete from "./PopupDelete.js";
 
 //Sprint 12 API
 import {
   loaded,
   userAPIGET,
   userAPIPATCH,
+  userAPIPATCHAvatar,
   cardsAPIGET,
   cardsAPIPOST,
+  cardsAPIToggleLike,
+  cardsAPIDelete,
 } from "./API.js";
 
+import {
+  editarAvatarFormularioPopup,
+  editarPerfilFormularioPopup,
+  verImagenPopUp,
+  eliminarCartaPopup,
+  agregarCartaPopup,
+} from "./constPopUps.js";
+
+/////Section Profile
 /*Profile*/
 let usuario;
 userAPIGET()
-  .then((user) => {
+  .then((datosAPI) => {
     usuario = new UserInfo({
-      profileName: user.name,
-      profileAbout: user.about,
-      profileAvatar: user.avatar,
+      profileName: datosAPI.name,
+      profileAbout: datosAPI.about,
+      profileAvatar: datosAPI.avatar,
     });
     usuario.setUser();
   })
@@ -34,14 +47,30 @@ userAPIGET()
     loaded();
   });
 
+/*Formulario cambiar foto de perfil*/
+const editprofileAvatar = document.querySelector("#editprofileAvatar");
+
+const avatarForm = new PopupWithForm({
+  PopupSelector: editarAvatarFormularioPopup,
+  handleFormSubmit: (inputs) => {
+    userAPIPATCHAvatar(inputs);
+    usuario.updateAvatar(inputs);
+    avatarForm.close();
+  },
+});
+avatarForm.setEventListeners();
+editprofileAvatar.addEventListener("click", () => {
+  avatarForm.open();
+});
+
 /*Formulario editar perfil*/
 const editProfileOpenButton = document.querySelector(".profile__edit-button");
 
 const profileForm = new PopupWithForm({
-  PopupSelector: "#edit-popup",
-  handleFormSubmit: (data) => {
-    userAPIPATCH(data);
-    usuario.updateUserInfo(data);
+  PopupSelector: editarPerfilFormularioPopup,
+  handleFormSubmit: (inputs) => {
+    userAPIPATCH(inputs);
+    usuario.updateInfo(inputs);
     profileForm.close();
   },
 });
@@ -51,22 +80,44 @@ editProfileOpenButton.addEventListener("click", () => {
   profileForm.open();
 });
 
-/*render*/
+//////Section Cards
+/*popUp imagenes*/
+const PopupVerImagenes = new PopupWithImage(verImagenPopUp);
+PopupVerImagenes.setEventListeners();
+
+/*popUp delete*/
+const PopupDeleteCard = new PopupDelete(eliminarCartaPopup);
+PopupDeleteCard.setEventListeners();
+
+/*renderizar Card*/
 function renderCard(data) {
-  const card = new Card(data, "#cards__list-template", (data) => {
-    PopupVerImagenes.open(data);
-  });
+  const card = new Card(
+    data,
+    "#cards__list-template",
+    (data) => {
+      PopupVerImagenes.open(data);
+    },
+    (esteElemento) => {
+      PopupDeleteCard.open(() => {
+        cardsAPIDelete(esteElemento._iD);
+        esteElemento.removeButtonFunction();
+        PopupDeleteCard.close();
+      });
+    },
+    (id, isLiked) => {
+      cardsAPIToggleLike(id, isLiked);
+    },
+  );
   const cardElement = card.generateCard(data);
   SectionCards.addItem(cardElement);
 }
 
-/*Seccion Cards*/
+/*List Cards*/
 let SectionCards;
-cardsAPIGET().then((datos) => {
-  console.log(datos);
+cardsAPIGET().then((datosAPI) => {
   SectionCards = new Section(
     {
-      items: datos,
+      items: datosAPI,
       render: (data) => {
         renderCard(data);
       },
@@ -76,18 +127,14 @@ cardsAPIGET().then((datos) => {
   SectionCards.renderItems();
 });
 
-/*popUp imagenes*/
-const PopupVerImagenes = new PopupWithImage("#image-popup");
-PopupVerImagenes.setEventListeners();
-
-/*Formulario addCard*/
+/*Formulario añadir Card*/
 const addCardOpenButton = document.querySelector(".profile__add-button");
 const addCardForm = new PopupWithForm({
-  PopupSelector: "#new-card-popup",
-  handleFormSubmit: (data) => {
-    cardsAPIPOST(data)
-      .then((datos) => {
-        renderCard(datos);
+  PopupSelector: agregarCartaPopup,
+  handleFormSubmit: (inputs) => {
+    cardsAPIPOST(inputs)
+      .then((datosAPI) => {
+        renderCard(datosAPI);
         addCardForm.close();
       })
       .catch((error) => {
@@ -104,6 +151,7 @@ addCardOpenButton.addEventListener("click", () => {
   addCardForm.open();
 });
 
+/////UTILS
 /*Validación de formularios*/
 const formErrorSettings = {
   input: ".popup__input",
@@ -118,6 +166,12 @@ const profileFormValidator = new FormValidator(
   profileForm._form,
 );
 profileFormValidator.setEventListeners();
+
+const profileFormAvatarValidator = new FormValidator(
+  formErrorSettings,
+  avatarForm._form,
+);
+profileFormAvatarValidator.setEventListeners();
 
 const addCardFormValidator = new FormValidator(
   formErrorSettings,

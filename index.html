@@ -8,7 +8,7 @@
     <link href="./pages/index.css" rel="stylesheet" />
   </head>
   <body class="page">
-    <div id="loading" class="loader">
+    <div id="api-loading" class="loader">
       <div class="spinner-loading"></div>
     </div>
     <div class="page__content">
@@ -21,7 +21,9 @@
       </header>
       <main class="content">
         <section class="profile page__section">
-          <img class="profile__image" src="" alt="Avatar" />
+          <div class="profile__image-container" id="editprofileAvatar">
+            <img class="profile__image" src="" alt="Avatar" />
+          </div>
           <div class="profile__info">
             <h1 class="profile__title"></h1>
             <button
@@ -135,6 +137,41 @@
           </form>
         </div>
       </div>
+      <div class="popup" id="changeAvatar-popup">
+        <div class="popup__content popup__content_type-small">
+          <button
+            aria-label="Cerrar ventana emergente"
+            class="popup__close"
+            type="button"
+          ></button>
+          <h3 class="popup__title">Cambiar Avatar</h3>
+          <form class="popup__form" id="change-avatar-form">
+            <input
+              class="popup__input popup__input_type_url"
+              name="avatarLink"
+              id="avatarLink"
+              placeholder="Enlace de la imagen"
+              required
+              type="url"
+            />
+            <span class="avatarLink-input-error popup__input-error"></span>
+            <button class="button popup__button" type="submit">
+              Cambiar Imagen
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="popup" id="deleteCard-popup">
+        <div class="popup__content popup__content_type-small">
+          <button
+            aria-label="Cerrar ventana emergente"
+            class="popup__close"
+            type="button"
+          ></button>
+          <h3 class="popup__title">¿Estás seguro/a de eliminar este lugar?</h3>
+          <button class="button popup__button" type="button">Si</button>
+        </div>
+      </div>
       <div class="popup" id="image-popup">
         <div class="popup__content popup__content_content_image">
           <button
@@ -142,7 +179,7 @@
             class="popup__close"
             type="button"
           ></button>
-          <img alt="" class="popup__image" src="#" />
+          <img alt="" class="popup__image" src="" />
           <p class="popup__caption"></p>
         </div>
       </div>

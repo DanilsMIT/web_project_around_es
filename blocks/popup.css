@@ -60,6 +60,11 @@
   padding: 34px 36px;
 }
 
+.popup__content_type-small {
+  text-align: center;
+  min-height: 10px;
+}
+
 .popup__form {
   margin-top: 27px;
 }

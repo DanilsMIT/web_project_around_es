@@ -2,6 +2,7 @@
   display: block;
   color: red;
   font-size: 12px;
+  margin-top: 10px;
 }
 
 .button__disabled {

@@ -1,12 +1,13 @@
 //cargando página...
-const loader = document.querySelector("#loading");
+const paginaloader = document.querySelector("#api-loading");
 function loading() {
-  loader.classList.remove("loader_hidden");
+  paginaloader.classList.remove("loader_hidden");
 }
 
 function loaded() {
-  loader.classList.add("loader_hidden");
+  paginaloader.classList.add("loader_hidden");
 }
+
 //usuario
 //get
 function userAPIGET() {
@@ -17,7 +18,7 @@ function userAPIGET() {
     },
   }).then((response) => response.json());
 }
-//patch
+//patch Info
 function userAPIPATCH(data) {
   loading();
   return fetch("https://around-api.es.tripleten-services.com/v1/users/me", {
@@ -40,8 +41,33 @@ function userAPIPATCH(data) {
     });
 }
 
+//patch Avatar
+function userAPIPATCHAvatar(data) {
+  loading();
+  return fetch(
+    "https://around-api.es.tripleten-services.com/v1/users/me/avatar",
+    {
+      method: "PATCH",
+      headers: {
+        authorization: "6e8faee7-cb36-424e-8723-26d1925bd141",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        avatar: data.avatarLink,
+      }),
+    },
+  )
+    .then((response) => response.json())
+    .catch((error) => {
+      console.log(error);
+    })
+    .finally(() => {
+      loaded();
+    });
+}
+
 //cartas
-//get
+//get cartas
 function cardsAPIGET() {
   loading();
   return fetch("https://around-api.es.tripleten-services.com/v1/cards/", {
@@ -50,7 +76,7 @@ function cardsAPIGET() {
     },
   }).then((response) => response.json());
 }
-//post
+//post carta
 function cardsAPIPOST(data) {
   loading();
   return fetch("https://around-api.es.tripleten-services.com/v1/cards/", {
@@ -66,4 +92,39 @@ function cardsAPIPOST(data) {
   }).then((response) => response.json());
 }
 
-export { loaded, userAPIGET, userAPIPATCH, cardsAPIGET, cardsAPIPOST };
+//put-delete like
+function cardsAPIToggleLike(id, isLiked) {
+  const metodo = isLiked ? "DELETE" : "PUT";
+  return fetch(
+    `https://around-api.es.tripleten-services.com/v1/cards/${id}/likes`,
+    {
+      method: metodo,
+      headers: {
+        authorization: "6e8faee7-cb36-424e-8723-26d1925bd141",
+        "Content-Type": "application/json",
+      },
+    },
+  ).then((response) => response.json());
+}
+
+//Delete carta
+function cardsAPIDelete(id) {
+  fetch(`https://around-api.es.tripleten-services.com/v1/cards/${id}`, {
+    method: "DELETE",
+    headers: {
+      authorization: "6e8faee7-cb36-424e-8723-26d1925bd141",
+      "Content-Type": "application/json",
+    },
+  }).then((response) => response.json());
+}
+
+export {
+  loaded,
+  userAPIGET,
+  userAPIPATCH,
+  userAPIPATCHAvatar,
+  cardsAPIGET,
+  cardsAPIPOST,
+  cardsAPIToggleLike,
+  cardsAPIDelete,
+};

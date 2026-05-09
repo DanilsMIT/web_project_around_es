@@ -14,8 +14,12 @@ export default class UserInfo {
     this._profileAvatar.src = this._avatar;
   }
 
-  updateUserInfo(data) {
+  updateInfo(data) {
     this._profileName.textContent = data.profileName;
     this._profileAbout.textContent = data.profileAbout;
+  }
+
+  updateAvatar(data) {
+    this._profileAvatar.src = data.avatarLink;
   }
 }
