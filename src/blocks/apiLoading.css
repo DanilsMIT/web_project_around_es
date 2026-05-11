@@ -9,16 +9,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  visibility: visible;
-  opacity: 1;
+  visibility: hidden;
+  opacity: 0;
   transition:
     opacity 0.3s ease,
     visibility 0.3s ease;
 }
 
-.loader_hidden {
-  visibility: hidden;
-  opacity: 0;
+.loader__visible {
+  visibility: visible;
+  opacity: 1;
 }
 
 .spinner-loading {

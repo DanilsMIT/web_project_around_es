@@ -5,6 +5,7 @@ const editarPerfilFormularioPopup = document.querySelector("#edit-popup");
 const verImagenPopUp = document.querySelector("#image-popup");
 const eliminarCartaPopup = document.querySelector("#deleteCard-popup");
 const agregarCartaPopup = document.querySelector("#new-card-popup");
+const paginaloader = document.querySelector("#api-loading");
 
 export {
   editarAvatarFormularioPopup,
@@ -12,4 +13,5 @@ export {
   verImagenPopUp,
   eliminarCartaPopup,
   agregarCartaPopup,
+  paginaloader,
 };
