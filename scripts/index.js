@@ -5,7 +5,7 @@ import FormValidator from "./FormValidator.js";
 import PopupWithForm from "./PopupWithForm.js";
 import UserInfo from "./UserInfo.js";
 import Section from "./Section.js";
-import PopupWithImage from "./PopupwithImage.js";
+import PopupWithImage from "./PopupWithImage.js";
 import PopupDelete from "./PopupDelete.js";
 
 //Sprint 12 API
