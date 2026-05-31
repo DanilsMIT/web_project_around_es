@@ -45,7 +45,7 @@ export default class aroundUSAPI {
 
   updateUserAvatar(data) {
     this._loading();
-    return fetch(`${this._url}users/me/avatar`, {
+    return fetch(`${this._url}/users/me/avatar`, {
       method: "PATCH",
       headers: this._headers,
       body: JSON.stringify({
